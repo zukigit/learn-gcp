@@ -7,9 +7,11 @@ profiles:
   manifests:
     rawYaml:
     - run-service-dev.yaml
+
 - name: prod
   manifests:
     rawYaml:
     - run-service-prod.yaml
+
 deploy:
   cloudrun: {}
