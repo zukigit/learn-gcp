@@ -5,12 +5,18 @@ metadata:
 description: main application pipeline
 serialPipeline:
   stages:
-  - targetId: run-qsdev
-    profiles: [dev] # This tells Cloud Deploy to use the 'dev' profile from skaffold.yaml for this stage
-  - targetId: run-qsprod
-    profiles: [prod] # This tells Cloud Deploy to use the 'prod' profile from skaffold.yaml for this stage
+  - targetId: all-services
+    profiles: ["dev", "dev1"]
 ---
-
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: all-services
+description: Deploy all Cloud Run services in parallel
+multiTarget:
+  targetIds:
+    - run-qsdev
+---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
@@ -25,15 +31,3 @@ run:
   # or from the --project flag.
   # However, the provided format *should* still work if that's your project ID.
   location: projects/prj-d-playground-shj9/locations/asia-southeast1
-
----
-
-apiVersion: deploy.cloud.google.com/v1
-kind: Target
-metadata:
-  name: run-qsprod
-description: Cloud Run production service
-run:
-  location: projects/prj-d-playground-shj9/locations/asia-southeast1
-  # You might want to add requireApproval: true for production targets
-  # requireApproval: true

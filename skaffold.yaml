@@ -8,6 +8,11 @@ profiles:
     rawYaml:
     - run-service-dev.yaml
 
+- name: dev1
+  manifests:
+    rawYaml:
+    - run-service1-dev.yaml
+
 - name: prod
   manifests:
     rawYaml:
