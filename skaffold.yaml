@@ -1,17 +1,8 @@
-apiVersion: skaffold/v4beta7
+apiVersion: skaffold/v4beta1
 kind: Config
-metadata: 
-  name: deploy-run-quickstart
-profiles:
-- name: service_1
-  manifests:
-    rawYaml:
-    - ./services/service_1.yaml
-
-- name: service_2
-  manifests:
-    rawYaml:
-    - ./services/service_2.yaml
-
+manifests:
+  rawYaml:
+  - ./services/service_1.yaml
+  - ./services/service_2.yaml
 deploy:
   cloudrun: {}
