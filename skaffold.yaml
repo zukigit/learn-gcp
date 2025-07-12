@@ -3,20 +3,15 @@ kind: Config
 metadata: 
   name: deploy-run-quickstart
 profiles:
-- name: dev
+- name: service_1
   manifests:
     rawYaml:
-    - run-service-dev.yaml
+    - ./services/service_1.yaml
 
-- name: dev1
+- name: service_2
   manifests:
     rawYaml:
-    - run-service1-dev.yaml
-
-- name: prod
-  manifests:
-    rawYaml:
-    - run-service-prod.yaml
+    - ./services/service_2.yaml
 
 deploy:
   cloudrun: {}
