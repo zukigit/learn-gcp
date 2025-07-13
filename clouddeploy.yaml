@@ -5,20 +5,13 @@ metadata:
 description: main application pipeline
 serialPipeline:
   stages:
-  - targetId: dev
-    profiles: []
+  - targetId: dev-service-1
+    profiles: [service-1]
+  - targetId: dev-service-2
+    profiles: [service-2]
 
 ---
-apiVersion: deploy.cloud.google.com/v1
-kind: Target
-metadata:
-  name: dev
-description: Deploy all Cloud Run services in parallel
-multiTarget:
-  targetIds:
-    - dev-service-1
-    # - dev-service-2
----
+
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
@@ -27,15 +20,10 @@ metadata:
     service: service-1
 description: Cloud Run development service
 run:
-  # The 'location' field for a Cloud Run target should be in the format 'projects/PROJECT_ID/locations/REGION'.
-  # You've currently provided 'projects/prj-d-playground-shj9/locations/asia-southeast1'.
-  # While this includes the project ID, it's more conventional and often expected
-  # to just provide the region directly in the 'location' field within the 'run' block,
-  # and let the 'gcloud deploy' command infer the project from your gcloud config
-  # or from the --project flag.
-  # However, the provided format *should* still work if that's your project ID.
   location: projects/prj-d-playground-shj9/locations/asia-southeast1
+
 ---
+
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
@@ -44,11 +32,22 @@ metadata:
     service: service-2
 description: Cloud Run development service
 run:
-  # The 'location' field for a Cloud Run target should be in the format 'projects/PROJECT_ID/locations/REGION'.
-  # You've currently provided 'projects/prj-d-playground-shj9/locations/asia-southeast1'.
-  # While this includes the project ID, it's more conventional and often expected
-  # to just provide the region directly in the 'location' field within the 'run' block,
-  # and let the 'gcloud deploy' command infer the project from your gcloud config
-  # or from the --project flag.
-  # However, the provided format *should* still work if that's your project ID.
   location: projects/prj-d-playground-shj9/locations/asia-southeast1
+
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Automation
+metadata:
+  name: my-run-demo-app-1/promote
+description: Promotes a release to the next target
+suspended: false
+serviceAccount: 628247785072-compute@developer.gserviceaccount.com
+selector:
+  targets:
+  - id: dev-service-1
+rules:
+- promoteReleaseRule:
+    name: "promote-release"
+    wait: 1m
+    toTargetId: "@next"
