@@ -5,37 +5,53 @@ metadata:
 description: main application pipeline
 serialPipeline:
   stages:
-  - targetId: params-prod-multi
+  - targetId: dev
+    profiles: [dev]
     deployParameters:
     - values:
-        serviceName: "service-1"
+        serviceName: "dev-service-1"
         maxInstances: "1"
         image: "nginx:stable-alpine3.21"
       matchTargetLabels:
-        label1: label1
+        service: dev-service-1
     - values:
-        serviceName: "service-2"
-        maxInstances: "2"
+        serviceName: "dev-service-2"
+        maxInstances: "1"
         image: "httpd:alpine3.22"
       matchTargetLabels:
-        label2: label2
+        service: dev-service-2
+  - targetId: prod
+    profiles: [prod]
+    deployParameters:
+    - values:
+        serviceName: "prod-service-1"
+        maxInstances: "1"
+        image: "nginx:stable-alpine3.21"
+      matchTargetLabels:
+        service: prod-service-1
+    - values:
+        serviceName: "prod-service-2"
+        maxInstances: "1"
+        image: "httpd:alpine3.22"
+      matchTargetLabels:
+        service: prod-service-2
 ---
 
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
-  name: params-prod-multi
+  name: dev
 description: production clusters
 multiTarget:
-  targetIds: [params-prod-a, params-prod-b]
+  targetIds: [dev-service-1, dev-service-2]
 ---
 
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
-  name: params-prod-a
+  name: dev-service-1
   labels:
-    label1: label1
+    service: dev-service-1
 description: production cluster 1
 # deployParameters:
 #   application_env1: "sampleValue1"
@@ -46,9 +62,44 @@ run:
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
-  name: params-prod-b
+  name: dev-service-2
   labels:
-    label2: label2
+    service: dev-service-2
+description: production cluster 2
+# deployParameters:
+#   application_env2: "sampleValue2"
+run:
+  location: projects/prj-d-playground-shj9/locations/asia-southeast1
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: prod
+description: production clusters
+multiTarget:
+  targetIds: [prod-service-1, prod-service-2]
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: prod-service-1
+  labels:
+    service: prod-service-1
+description: production cluster 1
+# deployParameters:
+#   application_env1: "sampleValue1"
+run:
+  location: projects/prj-d-playground-shj9/locations/asia-southeast1
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: prod-service-2
+  labels:
+    service: prod-service-2
 description: production cluster 2
 # deployParameters:
 #   application_env2: "sampleValue2"

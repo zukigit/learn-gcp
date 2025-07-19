@@ -1,0 +1,25 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: "" # from-param: ${serviceName}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: 0   # Min number of instance
+        autoscaling.knative.dev/maxScale: 1   # from-param: ${maxInstances}
+    spec:
+      containers:
+        - image: ""  # from-param: ${image}
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "1"
+  traffic:
+    - latestRevision: true
+      percent: 100
+  metadata:
+    annotations:
+      run.googleapis.com/cpu-throttling:  "true"        # Billing request based
