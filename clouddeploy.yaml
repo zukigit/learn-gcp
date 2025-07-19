@@ -5,49 +5,104 @@ metadata:
 description: main application pipeline
 serialPipeline:
   stages:
-  - targetId: dev-service-1
-    profiles: [service-1]
-  - targetId: dev-service-2
-    profiles: [service-2]
-
+  - targetId: params-prod-multi
+    deployParameters:
+    - values:
+        serviceName: "service-1"
+        maxInstances: "1"
+        image: "nginx:stable-alpine3.21"
+      matchTargetLabels:
+        label1: label1
+    - values:
+        serviceName: "service-2"
+        maxInstances: "2"
+        image: "httpd:alpine3.22"
+      matchTargetLabels:
+        label2: label2
 ---
 
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
-  name: dev-service-1
-  labels:
-    service: service-1
-description: Cloud Run development service
-run:
-  location: projects/prj-d-playground-shj9/locations/asia-southeast1
-
+  name: params-prod-multi
+description: production clusters
+multiTarget:
+  targetIds: [params-prod-a, params-prod-b]
 ---
 
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
-  name: dev-service-2
+  name: params-prod-a
   labels:
-    service: service-2
-description: Cloud Run development service
+    label1: label1
+description: production cluster 1
+# deployParameters:
+#   application_env1: "sampleValue1"
 run:
   location: projects/prj-d-playground-shj9/locations/asia-southeast1
-
 ---
 
 apiVersion: deploy.cloud.google.com/v1
-kind: Automation
+kind: Target
 metadata:
-  name: my-run-demo-app-1/promote
-description: Promotes a release to the next target
-suspended: false
-serviceAccount: 628247785072-compute@developer.gserviceaccount.com
-selector:
-  targets:
-  - id: dev-service-1
-rules:
-- promoteReleaseRule:
-    name: "promote-release"
-    wait: 1m
-    toTargetId: "@next"
+  name: params-prod-b
+  labels:
+    label2: label2
+description: production cluster 2
+# deployParameters:
+#   application_env2: "sampleValue2"
+run:
+  location: projects/prj-d-playground-shj9/locations/asia-southeast1
+
+
+
+
+# serialPipeline:
+#   stages:
+#   - targetId: dev-service-1
+#     profiles: [service-1]
+#   - targetId: dev-service-2
+#     profiles: [service-2]
+
+# ---
+
+# apiVersion: deploy.cloud.google.com/v1
+# kind: Target
+# metadata:
+#   name: dev-service-1
+#   labels:
+#     service: service-1
+# description: Cloud Run development service
+# run:
+#   location: projects/prj-d-playground-shj9/locations/asia-southeast1
+
+# ---
+
+# apiVersion: deploy.cloud.google.com/v1
+# kind: Target
+# metadata:
+#   name: dev-service-2
+#   labels:
+#     service: service-2
+# description: Cloud Run development service
+# run:
+#   location: projects/prj-d-playground-shj9/locations/asia-southeast1
+
+# ---
+
+# apiVersion: deploy.cloud.google.com/v1
+# kind: Automation
+# metadata:
+#   name: my-run-demo-app-1/promote
+# description: Promotes a release to the next target
+# suspended: false
+# serviceAccount: 628247785072-compute@developer.gserviceaccount.com
+# selector:
+#   targets:
+#   - id: dev-service-1
+# rules:
+# - promoteReleaseRule:
+#     name: "promote-release"
+#     wait: 1m
+#     toTargetId: "@next"

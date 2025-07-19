@@ -1,16 +1,16 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: service-2
+  name: service # from-param: ${serviceName}
 spec:
   template:
     metadata:
       annotations:
         autoscaling.knative.dev/minScale: 0   # Min number of instance
-        autoscaling.knative.dev/maxScale: 1   # Max number of instance
+        autoscaling.knative.dev/maxScale: 1   # from-param: ${maxInstances}
     spec:
       containers:
-        - image: nginx
+        - image: ""  # from-param: ${image}
           ports:
             - containerPort: 80
           resources:
