@@ -9,6 +9,7 @@ spec:
         autoscaling.knative.dev/minScale: 0   # Min number of instance
         autoscaling.knative.dev/maxScale: 1   # from-param: ${maxInstances}
     spec:
+      serviceAccountName: ""  # from-param: ${SERVICE_ACCOUNT}
       containers:
         - image: ""  # from-param: ${image}
           ports:
